@@ -1,0 +1,35 @@
+name: Trip Planner CI  # ✅ Name of the workflow (you'll see this in the GitHub Actions tab)
+
+# 🚀 When to trigger this workflow:
+on:
+  push:                # Run on push to the main branch
+    branches: [ main ]
+  pull_request:        # Run when someone opens a PR targeting main
+    branches: [ main ]
+
+jobs:
+  build-and-test:      # 👷 This is the name of the job
+    runs-on: ubuntu-latest   # Run the job on the latest Ubuntu VM
+
+    steps:
+    - name: Checkout repository       # 📥 Step 1: Get your code
+      uses: actions/checkout@v3
+
+    - name: Set up Python             # 🐍 Step 2: Install Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies      # 📦 Step 3: Install required packages
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Lint with flake8          # ✅ Step 4: (Optional) Check code style
+      run: |
+        pip install flake8
+        flake8 . --exclude .git,__pycache__,.venv,venv,build,dist --max-line-length=100
+
+    - name: Run trip planner test     # 🧪 Step 5: Run your main planner as a test
+      run: |
+        python main.py --destination "Paris" --days 3
